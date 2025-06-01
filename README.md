@@ -13,7 +13,7 @@ This is a custom Zabbix template for monitoring Android-based TV sticks (e.g. Xi
 3. Configure any macros if needed.
 
 ## Author
-Created by [твой ник или имя]
+Created by [github.com/unix3dcore]
 
 ## License
 MIT — see [LICENSE](./LICENSE) file.
