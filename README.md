@@ -1,0 +1,1 @@
+# zbx-stick4k
