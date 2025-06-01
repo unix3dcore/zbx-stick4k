@@ -1,0 +1,769 @@
+zabbix_export:
+  version: '7.2'
+  template_groups:
+    - uuid: 846977d1dfed4968bc5f8bdb363285bc
+      name: 'Templates/Operating systems'
+  templates:
+    - uuid: 40049695cdf746e48da7d5aa118e6d09
+      template: 'Android Xiaomi Mi TV Stick Template'
+      name: 'Android Xiaomi Mi TV Stick Template'
+      description: 'custom teplate for Xiaomi Mi TV Stick 4K'
+      groups:
+        - name: 'Templates/Operating systems'
+      items:
+        - uuid: 9934653e9abe42bc82243683280897ba
+          name: 'Agent active checks'
+          key: agent.active_check_status
+          delay: 30s
+          history: 1w
+          description: '1 if active check are enabled, 0 otherwise'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 9c41da2dbb534fa3ab29ddfd39efa458
+          name: 'Agent hostname'
+          key: agent.hostname
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'agent hostname as specified in app’s preferences'
+          inventory_link: NAME
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: e61ce75d96d54cf1b0ce2baae0093761
+              expression: 'change(/Android Xiaomi Mi TV Stick Template/agent.hostname) and length(last(/Android Xiaomi Mi TV Stick Template/agent.hostname))>0'
+              name: 'hostname has changed'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 983af2b2339d4b12b4ae5afbdb325dfb
+          name: 'Agent ping'
+          key: agent.ping
+          delay: 10s
+          history: 1w
+          description: 'ping zabbix agent every 10s'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: 31927f9291a64c488eb1dc5bfa8b50ee
+              expression: 'nodata(/Android Xiaomi Mi TV Stick Template/agent.ping,30s)=1'
+              name: 'zabbix agent is not available'
+              priority: HIGH
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 1301b50e505641bda726515ccfc64124
+          name: 'Agent version'
+          key: agent.version
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'version of zbx agent running'
+          inventory_link: SOFTWARE
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: b665b89401e2400dae28ee662e324abd
+              expression: '(last(/Android Xiaomi Mi TV Stick Template/agent.version,#1)<>last(/Android Xiaomi Mi TV Stick Template/agent.version,#2))>0'
+              name: 'zabbix agent has been updated'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: a1ac5dd770644c8aba509599f1f6118f
+          name: 'Android vendor'
+          key: android.manufacturer
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: |
+            android manufacturer name / vendor
+            manufacturer of the device
+          inventory_link: VENDOR
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 6c9a861b4b8e4c2d83eb9f81aae4589b
+          name: 'Android model'
+          key: android.model
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'model of the device'
+          inventory_link: MODEL
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 87c46d812c524e6b888081013bfd2459
+          name: 'Connected displays'
+          key: display.count
+          delay: 30s
+          history: 1w
+          description: 'amount of displays connected to device'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: df12144272d74b098d443a93d71b684c
+              expression: 'change(/Android Xiaomi Mi TV Stick Template/display.count)'
+              name: 'number of connected displays has changed'
+              priority: INFO
+              description: 'the number of connected displays has changed or no display connected'
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 2525dcd966f646e2809d6ba7fad61db4
+          name: 'Display state'
+          key: 'display.state[0]'
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'get the state of a display (see https://developer.android.com/reference/android/view/Display#getState())'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: 1bb153bd5ba74644972fd4e1d543fa9f
+              expression: 'last(/Android Xiaomi Mi TV Stick Template/display.state[0])<>"ON"'
+              name: 'connected display has changed own state'
+              priority: INFO
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: f4953ac8ce9642cc8010b0bc8f7576f0
+          name: 'Interfaces raw data'
+          key: net.if.ips
+          delay: 30s
+          history: 1w
+          value_type: TEXT
+          description: 'get IPs of specific interface (or all interfaces)'
+          inventory_link: HOST_NETWORKS
+          tags:
+            - tag: app
+              value: 'zbx agent'
+            - tag: data
+              value: raw
+        - uuid: 899d7a8fe51d4ccd806c678f2cbbbf98
+          name: 'Interface eth0 ipv4'
+          key: 'net.if.ips[eth0]'
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'eth0 ipv4 address'
+          inventory_link: ALIAS
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - '$.eth0[1]'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+            - tag: data
+              value: ipv4
+        - uuid: fcd6303f66314c59b49c70ea5ff69f0e
+          name: 'Readiness for interaction'
+          key: power.is_interactive
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'returns true if device is ready to interact with the user (screen on). See PowerManager.isInteractive from Android API for more info.'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 733eac3021234d4b9dc366657e0c8595
+          name: 'Power source'
+          key: power.source
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'one of “ac”, “usb”, “wireless”, “unplugged”'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 31c3341053ac4d30877e1b4c4bff05cd
+          name: 'Power status'
+          key: power.status
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'Power status'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: ff36fb58b4944233a222ef520e680cb3
+          name: 'Core 1 current frequency'
+          key: 'system.cpu.freq[0,cur]'
+          delay: 3s
+          history: 1w
+          value_type: FLOAT
+          units: Hz
+          description: 'get cur/min/max CPU frequency for specified core number'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: e8277f03f91d450b8913f98f1d569176
+          name: 'Core 2 current frequency'
+          key: 'system.cpu.freq[1,cur]'
+          delay: 3s
+          history: 1w
+          value_type: FLOAT
+          units: Hz
+          description: 'get cur/min/max CPU frequency for specified core number'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 573f038165614f0e9fe920743de76825
+          name: 'Core 3 current frequency'
+          key: 'system.cpu.freq[2,cur]'
+          delay: 3s
+          history: 1w
+          value_type: FLOAT
+          units: Hz
+          description: 'get cur/min/max CPU frequency for specified core number'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 63e568f30e6c41c29bd42365069d9f00
+          name: 'Core 4 current frequency'
+          key: 'system.cpu.freq[3,cur]'
+          delay: 3s
+          history: 1w
+          value_type: FLOAT
+          units: Hz
+          description: 'get cur/min/max CPU frequency for specified core number'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 1944b614a3fb4d9ea6eb02f778eba0a9
+          name: 'Number of CPU cores'
+          key: system.cpu.num
+          delay: 30s
+          history: 1w
+          description: 'for big.LITTLE CPU, only number of CPU in active cluster will count'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: ff61d7eda9a243dc927c36b71bf6a7ca
+          name: 'System hostname'
+          key: system.hostname
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'system hostname'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: ce5ac0f666f54684889ea56cf30ad80a
+          name: 'System arch'
+          key: system.sw.arch
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: system.sw.arch
+          inventory_link: HW_ARCH
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 0da6bfc12d2f4be6a3a97e82436de3dc
+          name: 'Android OS Version'
+          key: 'system.sw.os[]'
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: 'Android OS Version'
+          inventory_link: OS
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: 95c4c34e00794497bd2a400b09923e7e
+              expression: 'change(/Android Xiaomi Mi TV Stick Template/system.sw.os[])=1 and length(last(/Android Xiaomi Mi TV Stick Template/system.sw.os[]))>0'
+              name: 'OS version has changed'
+              priority: AVERAGE
+              manual_close: 'YES'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: afd09d6906d44c72b8cd8c90eb7282ca
+          name: 'System uname'
+          key: system.uname
+          delay: 30s
+          history: 1w
+          value_type: CHAR
+          description: system.uname
+          inventory_link: TYPE
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: f55dc56c52194d3d84823c62d9ad0bb2
+          name: 'System uptime'
+          key: system.uptime
+          delay: 10s
+          history: 1w
+          units: s
+          description: 'number of seconds since device boot'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: 27440d3e913e4fa7853f36d78e1f3f40
+              expression: 'last(/Android Xiaomi Mi TV Stick Template/system.uptime)<3m'
+              name: 'host has been restarted'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 1137d09350214acf9044a7a8ceb999f6
+          name: 'Partition (/) free space'
+          key: 'vfs.fs.size[/,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: b9def2d92f4543a7937a901f7ba142a1
+          name: 'Partition (/) percent free space'
+          key: 'vfs.fs.size[/,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 977a2ce6e1c74e1abc45afa005d618b5
+          name: 'Partition (/) total space'
+          key: 'vfs.fs.size[/,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 2f5f80a40cb4491baf60eecb27bccfe5
+          name: 'Partition (/data) free space'
+          key: 'vfs.fs.size[/data,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/data) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 9a553224e065430888c7b4b782a01a7c
+          name: 'Partition (/data) percent free space'
+          key: 'vfs.fs.size[/data,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/data) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: 9c92b3e82d2749aca4fd320079f72c68
+              expression: 'min(/Android Xiaomi Mi TV Stick Template/vfs.fs.size[/data,pfree],3m)<5'
+              name: 'partition (/data) free space <5%'
+              priority: DISASTER
+              description: 'partition (/data) free space < 5%'
+              tags:
+                - tag: scope
+                  value: notice
+            - uuid: 042bec731d1945c7860f10de133b2e07
+              expression: 'min(/Android Xiaomi Mi TV Stick Template/vfs.fs.size[/data,pfree],3m)<10'
+              name: 'partition (/data) free space <10%'
+              priority: HIGH
+              description: 'partition (/data) free space < 15%'
+              tags:
+                - tag: scope
+                  value: notice
+            - uuid: e5565968519f4327b8e1b791b972132d
+              expression: 'min(/Android Xiaomi Mi TV Stick Template/vfs.fs.size[/data,pfree],3m)<15'
+              name: 'partition (/data) free space <15%'
+              priority: AVERAGE
+              description: 'partition (/data) free space < 15%'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 5ed4154ed2794fc496cd0118d5f428db
+          name: 'Partition (/data) total space'
+          key: 'vfs.fs.size[/data,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/data) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 2646bb0640934f689dc6568fc013389e
+          name: 'Partition (/mnt) free space'
+          key: 'vfs.fs.size[/mnt,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/mnt) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: cbcadac4e9c74db980edde532b75faba
+          name: 'Partition (/mnt) percent free space'
+          key: 'vfs.fs.size[/mnt,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/mnt) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 661389604271446ab4f218ea7ddb094e
+          name: 'Partition (/mnt) total space'
+          key: 'vfs.fs.size[/mnt,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/mnt) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 991312c87eff4acb83c08fc0660d3d32
+          name: 'Partition (/odm) free space'
+          key: 'vfs.fs.size[/odm,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/odm) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 34281270698d44ba8c402557991c1a3e
+          name: 'Partition (/odm) percent free space'
+          key: 'vfs.fs.size[/odm,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/odm) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 9d8c91167cde40619be65af23d4014fc
+          name: 'Partition (/odm) total space'
+          key: 'vfs.fs.size[/odm,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/odm) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 70892d6f35844368b43852b8aaf10e0c
+          name: 'Partition (/oem) free space'
+          key: 'vfs.fs.size[/oem,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/oem) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 52d78f91426d4ccf9995c2cb80ef20c2
+          name: 'Partition (/oem) percent free space'
+          key: 'vfs.fs.size[/oem,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/oem) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: ad719310ee0944e68cd4431bece0014f
+          name: 'Partition (/oem) total space'
+          key: 'vfs.fs.size[/oem,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/oem) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 1f9ed869606a43f8a19dd2c1761e9a7f
+          name: 'Partition (/product) free space'
+          key: 'vfs.fs.size[/product,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/product) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 2429885250c14271a68ee904066f6993
+          name: 'Partition (/product) percent free space'
+          key: 'vfs.fs.size[/product,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/product) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: e1a9ea11e69746b4953c0a4bcca69b58
+          name: 'Partition (/product) total space'
+          key: 'vfs.fs.size[/product,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/product) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: b063fd2db6e44914bb77c940870e38ea
+          name: 'Partition (/system_ext) free space'
+          key: 'vfs.fs.size[/system_ext,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/system_ext) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 9afeabe00dda44fe9bda296e94e28f32
+          name: 'Partition (/system_ext) percent free space'
+          key: 'vfs.fs.size[/system_ext,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/system_ext) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 2bb5195383d0443d85f04951fc62339c
+          name: 'Partition (/system_ext) total space'
+          key: 'vfs.fs.size[/system_ext,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/system_ext) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: a7572f8be430449a849ddaf291d58e14
+          name: 'Partition (/vendor) free space'
+          key: 'vfs.fs.size[/vendor,free]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/vendor) free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: dbacc5dd75404de2b4d0c7ef9f83859b
+          name: 'Partition (/vendor) percent free space'
+          key: 'vfs.fs.size[/vendor,pfree]'
+          history: 1w
+          value_type: FLOAT
+          units: '%'
+          description: 'Partition (/vendor) percent free space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 6e66be6b45ba4d2bbfa66f28b024a1bc
+          name: 'Partition (/vendor) total space'
+          key: 'vfs.fs.size[/vendor,total]'
+          history: 1w
+          value_type: FLOAT
+          units: b
+          description: 'Partition (/vendor) total space'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 63d39c8e1b264352b0412c3c628a8e01
+          name: 'RAM (free)'
+          key: 'vm.memory.size[free]'
+          history: 1w
+          units: B
+          description: 'memory available in MB'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000000'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: b8dc356674aa48f89ededa069c0862fb
+              expression: 'min(/Android Xiaomi Mi TV Stick Template/vm.memory.size[free],1m)<398'
+              name: 'RAM usage >80%'
+              priority: HIGH
+              description: 'RAM usage >80%'
+              tags:
+                - tag: scope
+                  value: notice
+            - uuid: 290c12854fc449cca78675c533998316
+              expression: 'min(/Android Xiaomi Mi TV Stick Template/vm.memory.size[free],1m)<199'
+              name: 'RAM usage >90%'
+              priority: DISASTER
+              description: 'RAM usage >90%'
+              tags:
+                - tag: scope
+                  value: notice
+        - uuid: 6bdc81053abb422dab733e4cf3af92ae
+          name: 'RAM (total)'
+          key: 'vm.memory.size[total]'
+          history: 1w
+          units: B
+          description: 'total memory in MB'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '1000000'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+        - uuid: 113a9468ffa54ebf9345f73406b7ec55
+          name: 'Google Play response time'
+          key: 'web.page.perf[play.google.com,/,443]'
+          history: 1w
+          value_type: FLOAT
+          units: s
+          description: 'since android 9, only HTTPS queries are supported. Eg: web.page.perf[google.com,/,443]'
+          tags:
+            - tag: app
+              value: 'zbx agent'
+          triggers:
+            - uuid: 0de70bf8a33c46c589a143494151efcd
+              expression: '(max(/Android Xiaomi Mi TV Stick Template/web.page.perf[play.google.com,/,443],3m) > 1.5) or (nodata(/Android Xiaomi Mi TV Stick Template/web.page.perf[play.google.com,/,443],5m)=1)'
+              name: 'store slow / no response'
+              priority: AVERAGE
+              description: |
+                High response time or no response from Google Play
+                
+                store slow / no response
+              tags:
+                - tag: scope
+                  value: notice
+  triggers:
+    - uuid: 65561084ed1c4ea39728b54b87df5898
+      expression: |
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[0,cur],3m)=2004000 and
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[1,cur],3m)=2004000 and
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[2,cur],3m)=2004000 and
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[3,cur],3m)=2004000
+      name: 'all CPU cores at max frequency for >3m'
+      priority: HIGH
+      tags:
+        - tag: scope
+          value: notice
+    - uuid: 7ae5119ffab842d1a5b177fdac0b1026
+      expression: |
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[0,cur],3m)=2004000 or
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[1,cur],3m)=2004000 or
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[2,cur],3m)=2004000 or
+        min(/Android Xiaomi Mi TV Stick Template/system.cpu.freq[3,cur],3m)=2004000
+      name: 'CPU max frequency held for >3m on any core'
+      priority: HIGH
+      tags:
+        - tag: scope
+          value: notice
+  graphs:
+    - uuid: b3fdaa2c80b848198f135a1ae7b64f52
+      name: 'Frequency by CPU cores'
+      yaxismin: '600000000'
+      yaxismax: '3000000000'
+      ymin_type_1: FIXED
+      ymax_type_1: FIXED
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 00FF00
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'system.cpu.freq[0,cur]'
+        - sortorder: '1'
+          drawtype: GRADIENT_LINE
+          color: 0080FF
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'system.cpu.freq[1,cur]'
+        - sortorder: '2'
+          drawtype: GRADIENT_LINE
+          color: FF0080
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'system.cpu.freq[2,cur]'
+        - sortorder: '3'
+          drawtype: GRADIENT_LINE
+          color: FFFF00
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'system.cpu.freq[3,cur]'
+    - uuid: 46618797b85941d0b250fcb3264054f7
+      name: 'Google play response time'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: 00BFFF
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'web.page.perf[play.google.com,/,443]'
+    - uuid: fc8ba43f179b42dabd456b68c5f6f8dd
+      name: 'RAM usage'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: FF0080
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'vm.memory.size[total]'
+        - sortorder: '1'
+          drawtype: FILLED_REGION
+          color: 00FF00
+          calc_fnc: ALL
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'vm.memory.size[free]'
+    - uuid: c24797f968f24192b183acb0c8349fff
+      name: 'Space usage /data'
+      graph_items:
+        - drawtype: GRADIENT_LINE
+          color: FF0000
+          calc_fnc: MIN
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'vfs.fs.size[/data,total]'
+        - sortorder: '1'
+          drawtype: FILLED_REGION
+          color: 00FF00
+          calc_fnc: MIN
+          item:
+            host: 'Android Xiaomi Mi TV Stick Template'
+            key: 'vfs.fs.size[/mnt,free]'
