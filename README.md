@@ -15,6 +15,9 @@ This is a Zabbix template for basic monitoring of the Xiaomi Mi TV Stick 4K (mod
 
 ![triggers](https://github.com/user-attachments/assets/42635f2f-f672-4e21-bec7-e47889c522dd)
 
+## Graphs
+
+![graphs](https://github.com/user-attachments/assets/d0bebd99-96e7-45bc-ac34-3d58c86b9bec)
 
 
 Tested on Zabbix **7.2.7**.
