@@ -23,7 +23,7 @@ Tested on Zabbix **7.2.7**.
 
 ## Requirements
 
-This template uses an **unofficial Zabbix agent for Android** created by regis (a.k.a. dentier).
+This template uses an **unofficial Zabbix agent for Android** created by regis (a.k.a. dentier)..
 More info and APK: [https://blog.damongeot.fr/unofficial-zabbix-agent-for-android/](https://blog.damongeot.fr/unofficial-zabbix-agent-for-android/)
 
 ## Installation
